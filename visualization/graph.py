@@ -52,9 +52,10 @@ def plot_weights_l1(model, experiment_dir, output_name="weights.png"):
         plt.title(name)
         plt.xlabel('L1 Weights Norm')
         plt.ylabel('Frequency')
-        plt.hist(weights.reshape(-1), bins=300)
+        plt.hist(weights[np.nonzero(weights)], bins=300)
 
     plt.savefig(os.path.join(experiment_dir, output_name))
+    plt.close('all')
 
 
 def plot_units_l2(model, experiment_dir, output_name="units.png"):
@@ -76,3 +77,37 @@ def plot_units_l2(model, experiment_dir, output_name="units.png"):
         plt.hist(column_l2, bins=100)
 
     plt.savefig(os.path.join(experiment_dir, output_name))
+    plt.close('all')
+
+
+def plot_prune_history(
+        weight_losses,
+        weight_accuracies,
+        unit_losses,
+        unit_accuracies,
+        k_vals,
+        experiment_dir,
+        output_name='pruned_loss_accuracy.png'):
+    """
+    Plot the evaluation loss and accuracy for pruning on the test dataset.
+    Compares weight and unit pruning and writes as a png to the specified
+    experiment directory.
+    """
+    plt.figure(figsize=(12, 4))
+
+    plt.subplot(1, 2, 1)
+    plt.plot(k_vals, weight_losses)
+    plt.plot(k_vals, unit_losses)
+    plt.xlabel('Sparsity (%)')
+    plt.ylabel('Test Loss')
+    plt.legend(['weight', 'unit'], loc='upper left')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(k_vals, weight_accuracies)
+    plt.plot(k_vals, unit_accuracies)
+    plt.xlabel('Sparsity (%)')
+    plt.ylabel('Test Accuracy')
+    plt.legend(['weight', 'unit'], loc='lower left')
+
+    plt.savefig(os.path.join(experiment_dir, output_name))
+    plt.close('all')

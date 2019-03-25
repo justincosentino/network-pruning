@@ -1,12 +1,12 @@
 """
-Train the model.
+Trains the model and runs pruning experiments.
 """
 import os
 import tensorflow as tf
 from .data.registry import load_data
-from .models.model import build_model
-from .utils import unique_id, get_checkpoint_dir, get_checkpoint_name
-from .visualization.graph import plot_history
+from .models.model import *
+from .utils import *
+from .visualization import csv, gifs, graph
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -37,12 +37,20 @@ def init_flags():
         "learning_rate",
         0.001,
         "The optimizer's learning rate.")
+    tf.flags.DEFINE_list(
+        "k_vals",
+        [.0, .25, .50, .60, .70, .80, .90, .95, .97, .99],
+        "A list of sparsity values to use in pruning experiments.")
     tf.flags.DEFINE_string(
         "output_dir",
         default=os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             "results/"),
         help="The output directory for checkpoints, figures, etc.")
+    tf.flags.DEFINE_boolean(
+        "keep_best",
+        default=True,
+        help="If true, keep the best validation acc model when checkpointing.")
     tf.flags.DEFINE_boolean(
         "force_train",
         default=False,
@@ -78,7 +86,7 @@ def train(experiment_dir):
     tf.io.gfile.mkdir(checkpoint_dir)
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
         get_checkpoint_name(checkpoint_dir),
-        save_best_only=True,
+        save_best_only=FLAGS.keep_best,
         mode="auto",
         verbose=1)
 
@@ -90,8 +98,70 @@ def train(experiment_dir):
         epochs=FLAGS.epochs,
         validation_data=(x_valid, y_valid),
         callbacks=[checkpoint_callback])
-    plot_history(history, experiment_dir)
+    graph.plot_history(history, experiment_dir)
     model.evaluate(x=x_test, y=y_test)
+
+
+def prune_experiments(experiment_dir):
+    """
+    Runs weight and unit pruning experiments over the provided k_vals list.
+    Evaluates the pruned model on the specified MNIST test subset and saves
+    results to the specified experiment directory.
+    """
+
+    # Load dense model and test data
+    dense_model = load_model_weights(experiment_dir)
+    (_, _, _, _, x_test, y_test) = load_data(FLAGS.dataset)(
+        num_valid=FLAGS.num_valid)
+    print("----------- Dense Model without pruning ----------")
+    dense_model.evaluate(x=x_test, y=y_test)
+
+    weight_accuracies, unit_accuracies = [], []
+    weight_losses, unit_losses = [], []
+    for k in FLAGS.k_vals:
+        int_k = int(k*100)
+
+        # Run weight pruning
+        print("-------------- Weight pruning k={:.2f} -------------".format(k))
+        weight_pruned_model = convert_dense_to_weight_pruned(dense_model, k=k)
+        graph.plot_weights_l1(
+            weight_pruned_model,
+            experiment_dir,
+            "pruned_weights_l1_k={}.png".format(int_k))
+        weight_loss, weight_acc = weight_pruned_model.evaluate(
+            x=x_test,
+            y=y_test)
+        weight_losses.append(weight_loss)
+        weight_accuracies.append(weight_acc)
+
+        # Run unit pruning
+        print("--------------   Unit pruning k={:.2f} -------------".format(k))
+        unit_pruned_model = convert_dense_to_unit_pruned(dense_model, k=k)
+        graph.plot_units_l2(
+            unit_pruned_model,
+            experiment_dir,
+            "pruned_units_l2_k={}.png".format(int_k))
+        unit_loss, unit_acc = unit_pruned_model.evaluate(x=x_test, y=y_test)
+        unit_losses.append(unit_loss)
+        unit_accuracies.append(unit_acc)
+
+    # Plot weight vs unit pruning and write results to csv
+    graph.plot_prune_history(
+        weight_losses,
+        weight_accuracies,
+        unit_losses,
+        unit_accuracies,
+        FLAGS.k_vals,
+        experiment_dir)
+    gifs.convert_imgs_to_gif(experiment_dir, "pruned_weights")
+    gifs.convert_imgs_to_gif(experiment_dir, "pruned_units")
+    csv.write_to_csv(
+        weight_losses,
+        weight_accuracies,
+        unit_losses,
+        unit_accuracies,
+        FLAGS.k_vals,
+        experiment_dir)
 
 
 def main(_):
@@ -107,6 +177,7 @@ def main(_):
             "Experiment directory '{}' already ".format(experiment_dir) +
             "exists. Run with '--force_train' to overwrite. " +
             "Using existing weights for pruning.")
+        prune_experiments(experiment_dir)
         return
 
     # If the model already exists and the user has specified --force_training,
@@ -118,6 +189,7 @@ def main(_):
 
     tf.io.gfile.mkdir(experiment_dir)
     train(experiment_dir)
+    prune_experiments(experiment_dir)
 
 
 if __name__ == "__main__":

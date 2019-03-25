@@ -1,7 +1,10 @@
 """ Functions for building and pruning/sparsifying models. """
 
 import tensorflow as tf
+import numpy as np
 from ..utils import get_checkpoint_dir, get_checkpoint_name
+
+FLAGS = tf.app.flags.FLAGS
 
 
 def build_model(name="dense_model"):
@@ -43,7 +46,7 @@ def build_model(name="dense_model"):
         return model
 
 
-def load_model_weights(experiment_dir, learning_rate):
+def load_model_weights(experiment_dir):
     """
     Loads a saved model's weights from the associated experiment checkpoint
     directory.
@@ -59,26 +62,74 @@ def load_model_weights(experiment_dir, learning_rate):
     # Load the weights and compile the model
     model = build_model()
     model.load_weights(get_checkpoint_name(checkpoint_dir))
+
+    # TODO: it would be nice to not compile each time we copy values or load
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(lr=learning_rate),
+        optimizer=tf.keras.optimizers.Adam(lr=FLAGS.learning_rate),
         loss="sparse_categorical_crossentropy",
         metrics=["accuracy"])
-
     return model
 
 
 def convert_dense_to_weight_pruned(model, k=0):
     """
-    TODO: Implement me.
+    Given a dense model, perform k%-weight pruning and return a sparsified
+    model.
     """
-    raise Exception("convert_dense_to_weight_pruned:: Not implemented")
+    # Clone the existing dense model
+    new_model = tf.keras.models.clone_model(model)
+    new_model.set_weights(model.get_weights())
+
+    # Skip output layer
+    for layer in new_model.layers[:-1]:
+        # l1 norm the weights for the given layer
+        weights = layer.get_weights()[0]
+        normed = np.absolute(weights)
+
+        # Find the k% threshold value (< threshold_val should be zeroed)
+        kth_index = int(weights.size * k)
+        threshold_val = np.partition(normed.flatten(), kth_index)[kth_index]
+
+        # Zero k% of weights
+        weights[normed < threshold_val] = 0
+        layer.set_weights([weights])
+
+    # TODO: it would be nice to not compile each time we clone values or load
+    new_model.compile(
+        optimizer=tf.keras.optimizers.Adam(lr=FLAGS.learning_rate),
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"])
+    return new_model
 
 
 def convert_dense_to_unit_pruned(model, k=0):
     """
-    TODO: Implement me.
+    Given a dense model, perform k%-unit pruning and return a sparsified model.
     """
-    raise Exception("convert_dense_to_unit_pruned:: Not implemented")
+    # Clone the existing dense model
+    new_model = tf.keras.models.clone_model(model)
+    new_model.set_weights(model.get_weights())
+
+    # Skip output layer
+    for layer in new_model.layers[:-1]:
+        # l2 norm the weights for the given layer
+        weights = layer.get_weights()[0]
+        normed = np.linalg.norm(weights, ord=2, axis=0)
+
+        # Find the k% threshold value (< threshold_val should be zeroed)
+        kth_index = int(normed.size * k)
+        threshold_val = np.partition(normed.flatten(), kth_index)[kth_index]
+
+        # Zero k% of units
+        weights[:, normed < threshold_val] = 0
+        layer.set_weights([weights])
+
+    # TODO: it would be nice to not compile each time we clone values or load
+    new_model.compile(
+        optimizer=tf.keras.optimizers.Adam(lr=FLAGS.learning_rate),
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"])
+    return new_model
 
 
 def convert_dense_to_sparse_weight(model, k=0):
