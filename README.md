@@ -13,9 +13,6 @@ Train a very large neural network, then make it very small.
   - [Results](#results)
     - [Training](#training)
     - [Pruning](#pruning)
-    - [Sparsity](#sparsity)
-  - [Discussion](#discussion)
-  - [References](#references)
 
 ## Requirements
 
@@ -27,7 +24,7 @@ pip install -r requirements.txt
 
 ## Quick Start
 
-Training and pruning are controlled by a single command:
+Training and pruning are controlled by a single command. To use the experiment module, navigate to the module's parent directory and run
 
 ```[bash]
 $ python -m network-pruning.train
@@ -53,7 +50,7 @@ The code is organized as follows:
 ├── models                            # Model construction and pruning
 │   ├── __init__.py
 │   └── model.py
-├── references                        # Figures used in README.md
+├── references                        # Figures and csv used in README.md
 ├── results                           # Default directory for checkpoints,
 │   ├── <experiment_id>               #   figures, metrics, etc.
 │   │   ├── checkpoints
@@ -120,9 +117,44 @@ Try --helpfull to get a list of all flags.
 
 ## Experiments
 
+Experiments were run on a dense network with four hidden layers:
+
+```[text]
+Layer (type)                 Output Shape              Param #
+=================================================================
+hidden_1 (Dense)             (None, 1000)              784000
+_________________________________________________________________
+hidden_2 (Dense)             (None, 1000)              1000000
+_________________________________________________________________
+hidden_3 (Dense)             (None, 500)               500000
+_________________________________________________________________
+hidden_4 (Dense)             (None, 200)               100000
+_________________________________________________________________
+output (Dense)               (None, 10)                2000
+=================================================================
+Total params: 2,386,000
+Trainable params: 2,386,000
+Non-trainable params: 0
+_________________________________________________________________
+```
+
+Each hidden layer used a ReLU activation function while the final output layer used a softmax activation function. Relevant training configuration information includes:
+
+- epochs: 20
+- batch size: 128
+- validation set size: 10,000
+- Adam optimizer with a learning rate of 0.001 and default beta/epsilon/decay values
+- data was shuffled before each epoch
+
+Snapshots were taken after each epoch if the model improved on the existing snapshot's validation loss.
+
+For each value `k = [0, 25, 50, 60, 70, 80, 90, 95, 97, 99]`, the pre-trained model was cloned twice. Each clone was pruned to k% sparsity using either weight pruning or unit pruning. The pruned model was then assessed using the standard test dataset. The distribution of L1 model weights or L2 unit norms were measured at each sparsity interval.
+
+All experiments were run on both the MNIST Digits and MNIST Fashion datasets.
+
 ## Results
 
-All presented results were generated using the following two runs:
+All presented results were generated using the following two configurations:
 
 ```[bash]
 $ python -m network-pruning.train --dataset=digits --epochs=20 --learning_rate=0.001 --force_train
@@ -133,6 +165,8 @@ $ python -m network-pruning.train --dataset=fashion --epochs=20 --learning_rate=
 
 ### Training
 
+The following two figures show the model's loss and accuracy during training.
+
 ![MNIST Digit Training Loss/Acc](./references/digits/loss_accuracy.png)
 *MNIST Digit training loss and accuracy over 20 epochs*
 
@@ -140,6 +174,8 @@ $ python -m network-pruning.train --dataset=fashion --epochs=20 --learning_rate=
 *MNIST Fashion training loss and accuracy over 20 epochs*
 
 ### Pruning
+
+The following four figures depict the model's L1 weight norm distribution and L2 unit norm distribution throughout the sparsification process. As expected, low-valued weights and units are removed from the model as sparsification increases.
 
 ![MNIST Digit Weight Pruning](./references/digits/pruned_weights.gif)
 *L1 norm distribution of MNIST Digit model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
@@ -153,13 +189,15 @@ $ python -m network-pruning.train --dataset=fashion --epochs=20 --learning_rate=
 ![MNIST Fashion Unit Pruning](./references/fashion/pruned_units.gif)
 *L2 norm distribution of MNIST Fashion model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
+The following two figures compare test loss and test accuracy as sparsity changes. These values are also presented in the two tables below.
+
 ![MNIST Digit Test Loss/Acc](./references/digits/pruned_loss_accuracy.png)
 *MNIST Digit test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
 ![MNIST Fashion Test Loss/Acc](./references/fashion/pruned_loss_accuracy.png)
 *MNIST Fashion test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
-Digits:
+MNIST Digits:
 
 Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: (Weight)  |  Test Loss: (Unit)
 --------------|--------------------------------|----------------------------------|-------------------------------|---------------------------
@@ -174,7 +212,7 @@ Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: 
 0.9700        |  0.7721                        |  0.1280                          |  2.2456                       |  2.3023
 0.9900        |  0.3091                        |  0.0980                          |  2.2996           |   2.3026
 
-Fashion:
+MNIST Fashion:
 
 Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: (Weight)  |  Test Loss: (Unit)
 --------------|--------------------------------|----------------------------------|-------------------------------|---------------------------
@@ -189,8 +227,3 @@ Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: 
 0.9700        |  0.3554                        |  0.1634                          |  2.0118                       |  2.3008
 0.9900        |  0.1161                        |  0.0971                          |  2.2380                       |  2.3027
 
-### Sparsity
-
-## Discussion
-
-## References
