@@ -8,15 +8,11 @@ from .models.model import *
 from .utils import *
 from .visualization import csv, gifs, graph
 
-FLAGS = tf.app.flags.FLAGS
+FLAGS = None
 
 
 def init_flags():
     """ Initialize flags related to model training. """
-    tf.flags.DEFINE_boolean(
-        "debug",
-        default=False,
-        help="Debug mode")
     tf.flags.DEFINE_string(
         "dataset",
         default="digits",
@@ -57,12 +53,8 @@ def init_flags():
         help="If true, overwrite existing model for given hparam config.")
     tf.flags.DEFINE_string(
         "experiment_id",
-        default=unique_id(FLAGS),
+        default=None,
         help="A unique name to identify the current model and experiment.")
-
-    # Update logging as needed
-    if FLAGS.debug:
-        tf.logging.set_verbosity(tf.logging.DEBUG)
 
 
 def train(experiment_dir):
@@ -166,6 +158,13 @@ def prune_experiments(experiment_dir):
 
 def main(_):
     """ Prepare specified directory and kickoff training. """
+    global FLAGS
+    FLAGS = tf.app.flags.FLAGS
+
+    # Set unique id based on flags if not specified
+    if not FLAGS.experiment_id:
+        FLAGS.experiment_id = unique_id(FLAGS)
+
     experiment_dir = os.path.join(
         FLAGS.output_dir,
         FLAGS.experiment_id)

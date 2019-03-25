@@ -26,16 +26,6 @@ def load_from_keras(keras_dataset, num_valid=10000):
     (x_train, x_valid) = x_train[num_valid:], x_train[:num_valid]
     (y_train, y_valid) = y_train[num_valid:], y_train[:num_valid]
 
-    if FLAGS.debug:
-        tf.logging.debug(
-            "data_shapes: \n\tx_train: {} ".format(x_train.shape) +
-            "\n\tx_valid: {} ".format(x_valid.shape) +
-            "\n\tx_test:  {}".format(x_test.shape))
-        tf.logging.debug(
-            "data_shapes: \n\ty_train: {} ".format(y_train.shape) +
-            "\n\ty_valid: {} ".format(y_valid.shape) +
-            "\n\ty_test:  {}".format(y_test.shape))
-
     return (x_train, y_train, x_valid, y_valid, x_test, y_test)
 
 
