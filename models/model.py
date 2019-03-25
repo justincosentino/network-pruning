@@ -32,13 +32,37 @@ def build_model(name="dense_model"):
         model = tf.keras.Sequential([
             tf.keras.layers.InputLayer(input_shape=(784,), name="input"),
             tf.keras.layers.Dense(
-                1000, activation=tf.nn.relu, use_bias=False, name="hidden_1"),
+                1000,
+                activation=tf.nn.relu,
+                kernel_regularizer=tf.keras.regularizers.l1_l2(
+                    l1=FLAGS.l1_reg,
+                    l2=FLAGS.l2_reg),
+                use_bias=False,
+                name="hidden_1"),
             tf.keras.layers.Dense(
-                1000, activation=tf.nn.relu, use_bias=False, name="hidden_2"),
+                1000,
+                activation=tf.nn.relu,
+                kernel_regularizer=tf.keras.regularizers.l1_l2(
+                    l1=FLAGS.l1_reg,
+                    l2=FLAGS.l2_reg),
+                use_bias=False,
+                name="hidden_2"),
             tf.keras.layers.Dense(
-                500, activation=tf.nn.relu, use_bias=False, name="hidden_3"),
+                500,
+                activation=tf.nn.relu,
+                kernel_regularizer=tf.keras.regularizers.l1_l2(
+                    l1=FLAGS.l1_reg,
+                    l2=FLAGS.l2_reg),
+                use_bias=False,
+                name="hidden_3"),
             tf.keras.layers.Dense(
-                200, activation=tf.nn.relu, use_bias=False, name="hidden_4"),
+                200,
+                activation=tf.nn.relu,
+                kernel_regularizer=tf.keras.regularizers.l1_l2(
+                    l1=FLAGS.l1_reg,
+                    l2=FLAGS.l2_reg),
+                use_bias=False,
+                name="hidden_4"),
             tf.keras.layers.Dense(
                 10, activation=tf.nn.softmax, use_bias=False, name="output")
         ])

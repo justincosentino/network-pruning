@@ -33,6 +33,14 @@ def init_flags():
         "learning_rate",
         0.001,
         "The optimizer's learning rate.")
+    tf.flags.DEFINE_float(
+        "l1_reg",
+        0,
+        "l1 regularization lambda")
+    tf.flags.DEFINE_float(
+        "l2_reg",
+        0,
+        "l2 regularization lambda")
     tf.flags.DEFINE_list(
         "k_vals",
         [.0, .25, .50, .60, .70, .80, .90, .95, .97, .99],

@@ -30,7 +30,7 @@ Training and pruning are controlled by a single command. To use the experiment m
 $ python -m network-pruning.train
 ```
 
-A unique `experiment_id` is either specified by the user or generated using a subset of flag parameters (`dataset`, `epoch`, and `learning_rate`). Checkpoints and results will be written to `./<output_dir>/<experiment_id>`. If this results directory already exists, the script will run pruning experiments without retraining. To retrain the model, either specify the `--force_train` flag or delete the results directory and rerun the command.
+A unique `experiment_id` is either specified by the user or generated using a subset of flag parameters (`dataset`, `epoch`, `learning_rate`, and regularization lambdas). Checkpoints and results will be written to `./<output_dir>/<experiment_id>`. If this results directory already exists, the script will run pruning experiments without retraining. To retrain the model, either specify the `--force_train` flag or delete the results directory and rerun the command.
 
 ### Directory Structure
 
@@ -85,8 +85,7 @@ $ python -m network-pruning.train --help
 Trains the model and runs pruning experiments.
 
 flags:
-
-/Users/tino/code/git/research/network-pruning/train.py:
+/path/to/network-pruning/train.py:
   --batch_size: The batch size
     (default: '128')
     (an integer)
@@ -103,6 +102,12 @@ flags:
     (a comma separated list)
   --[no]keep_best: If true, keep the best validation acc model when checkpointing.
     (default: 'true')
+  --l1_reg: l1 regularization lambda
+    (default: '0.0')
+    (a number)
+  --l2_reg: l2 regularization lambda
+    (default: '0.0')
+    (a number)
   --learning_rate: The optimizer's learning rate.
     (default: '0.001')
     (a number)
@@ -226,4 +231,3 @@ Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: 
 0.9500        |  0.6263                        |  0.1065                          |  1.6489                       |  2.2940
 0.9700        |  0.3554                        |  0.1634                          |  2.0118                       |  2.3008
 0.9900        |  0.1161                        |  0.0971                          |  2.2380                       |  2.3027
-
