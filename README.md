@@ -19,6 +19,12 @@ Train a very large neural network, then make it very small.
 
 ## Requirements
 
+All requirements are listed in `requirements.txt`. To install, run
+
+```[bash]
+pip install -r requirements.txt
+```
+
 ## Quick Start
 
 Training and pruning are controlled by a single command:
