@@ -154,6 +154,7 @@ $ python -m network-pruning.train --dataset=fashion --epochs=20 --learning_rate=
 *MNIST Fashion test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
 Digits:
+
 Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: (Weight)  |  Test Loss: (Unit)
 --------------|--------------------------------|----------------------------------|-------------------------------|---------------------------
 0.0000        |  0.9813                        |  0.9813                          |  0.0857                       |  0.0857
@@ -168,6 +169,7 @@ Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: 
 0.9900        |  0.3091                        |  0.0980                          |  2.2996           |   2.3026
 
 Fashion:
+
 Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: (Weight)  |  Test Loss: (Unit)
 --------------|--------------------------------|----------------------------------|-------------------------------|---------------------------
 0.0000        |  0.8924                        |  0.8924                          |  0.3234                       |  0.3234
