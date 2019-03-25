@@ -25,4 +25,7 @@ def write_to_csv(
         "Test Loss: (Weight Pruning)": weight_losses,
         "Test Loss: (Unit Pruning)": unit_losses,
     })
-    frame.to_csv(os.path.join(experiment_dir, output_name), index=False)
+    frame.to_csv(
+        os.path.join(experiment_dir, output_name),
+        index=False,
+        float_format="%.4f")
