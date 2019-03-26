@@ -16,6 +16,8 @@ Train a very large neural network, then make it very small.
   - [Analysis](#analysis)
     - [Original Experiments](#original-experiments)
     - [Regularization](#regularization)
+    - [Additional Thoughts](#additional-thoughts)
+  - [References](#references)
 
 ## Requirements
 
@@ -319,3 +321,21 @@ Sparsity (%)  |  Test Accuracy (Weight)  |  Test Accuracy (Unit)  |  Test Loss: 
 0.9900        |  0.8325                  |  0.1129                |  0.6735               |  2.4571
 0.9950        |  0.8337                  |  0.0665                |  0.6653               |  2.3778
 0.9990        |  0.8017                  |  0.1500                |  0.7609               |  2.3263
+
+### Additional Thoughts
+
+I found two ICLR 2019 papers discussing pruning: "Rethinking the Value of Network Pruning" [1] and "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks" [2].
+
+[2] suggests that dense, randomly-initialized, feed-forward networks contain subnetworks that can be trained in isolation to reach an accuracy similar to the original network.
+
+[1] "make[s] several surprising observations which contradict common beliefs", including the claim that the initialization method proposed in [2] does not work:
+
+"We also compare with the 'Lottery Ticket Hypothesis' (Frankle & Carbin, 2019), and find that with optimal learning rate, the 'winning ticket' initialization as used in Frankle & Carbin (2019) does not bring improvement over random initialization."
+
+[2] acknowledges this and says that initialization does matter when pruning at 98.5%. Both state the importance of the sparsified subnets. These back-and-forths are kind of amusing as an observer,but must have been stressful as an author.
+
+## References
+
+[1] [Rethinking the Value of Network Pruning](https://arxiv.org/abs/1810.05270)
+
+[2] [The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks](https://arxiv.org/abs/1803.03635)
