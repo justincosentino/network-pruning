@@ -13,6 +13,8 @@ Train a very large neural network, then make it very small.
   - [Results](#results)
     - [Training](#training)
     - [Pruning](#pruning)
+  - [Discussion](#discussion)
+    - [Regularization](#regularization)
 
 ## Requirements
 
@@ -183,24 +185,24 @@ The following two figures show the model's loss and accuracy during training.
 The following four figures depict the model's L1 weight norm distribution and L2 unit norm distribution throughout the sparsification process. As expected, low-valued weights and units are removed from the model as sparsification increases.
 
 ![MNIST Digit Weight Pruning](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/pruned_weights.gif)
-*L1 norm distribution of MNIST Digit model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
+*L1 norm distribution of MNIST Digit model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
 
 ![MNIST Fashion Weight Pruning](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/pruned_weights.gif)
-*L1 norm distribution of MNIST Fashion model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
+*L1 norm distribution of MNIST Fashion model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
 
 ![MNIST Digit Unit Pruning](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/pruned_units.gif)
-*2 norm distribution of MNIST Digit model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
+*2 norm distribution of MNIST Digit model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5].*
 
 ![MNIST Fashion Unit Pruning](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/pruned_units.gif)
-*L2 norm distribution of MNIST Fashion model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
+*L2 norm distribution of MNIST Fashion model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5].*
 
 The following two figures compare test loss and test accuracy as sparsity changes. These values are also presented in the two tables below.
 
 ![MNIST Digit Test Loss/Acc](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/pruned_loss_accuracy.png)
-*MNIST Digit test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
+*MNIST Digit test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5].*
 
 ![MNIST Fashion Test Loss/Acc](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/pruned_loss_accuracy.png)
-*MNIST Fashion test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
+*MNIST Fashion test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5].*
 
 MNIST Digits:
 
@@ -235,3 +237,16 @@ Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: 
 0.9900        |  0.1609                        |  0.0231                          |  2.2944                       |  2.3027
 0.9950        |  0.0993                        |  0.0635                          |  2.3092                       |  2.3028
 0.9990        |  0.0156                        |  0.1000                          |  2.3042                       |  2.3026
+
+## Discussion
+
+### Regularization
+![MNIST Digit Test Loss/Acc](./references/digits-20-lr=0.001-l1=0.0-l2=0.01/pruned_loss_accuracy.png)
+*MNIST Digit test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5].*
+
+![MNIST Digit Test Loss/Acc](./references/digits-20-lr=0.001-l1=0.001-l2=0.0/pruned_loss_accuracy.png)
+*MNIST Digit test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.5].*
+
+![MNIST Fashion Test Loss/Acc](./references/fashion-20-lr=0.001-l1=0.0-l2=0.01/pruned_loss_accuracy.png)
+
+![MNIST Fashion Test Loss/Acc](./references/fashion-20-lr=0.001-l1=0.001-l2=0.0/pruned_loss_accuracy.png)
