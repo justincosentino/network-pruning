@@ -1,4 +1,4 @@
-Sparsity (%),Test Accuracy (Unit Pruning),Test Accuracy (Weight Pruning),Test Loss: (Weight Pruning),Test Loss: (Unit Pruning)
+Sparsity (%),Test Accuracy (Weight),Test Accuracy (Unit),Test Loss: (Weight),Test Loss: (Unit)
 0.0000,0.9459,0.9459,0.6719,0.6719
 0.2500,0.9459,0.9458,0.6600,0.6082
 0.5000,0.9459,0.9458,0.6198,0.5409
