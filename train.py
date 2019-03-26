@@ -43,7 +43,7 @@ def init_flags():
         "l2 regularization lambda")
     tf.flags.DEFINE_list(
         "k_vals",
-        [.0, .25, .50, .60, .70, .80, .90, .95, .97, .99],
+        [.0, .25, .50, .60, .70, .80, .90, .95, .97, .99, .995, .999],
         "A list of sparsity values to use in pruning experiments.")
     tf.flags.DEFINE_string(
         "output_dir",
@@ -119,15 +119,15 @@ def prune_experiments(experiment_dir):
     weight_accuracies, unit_accuracies = [], []
     weight_losses, unit_losses = [], []
     for k in FLAGS.k_vals:
-        int_k = int(k*100)
 
         # Run weight pruning
-        print("-------------- Weight pruning k={:.2f} -------------".format(k))
+        print("-------------- Weight pruning k={:.3f} -------------".format(k))
         weight_pruned_model = convert_dense_to_weight_pruned(dense_model, k=k)
         graph.plot_weights_l1(
             weight_pruned_model,
             experiment_dir,
-            "pruned_weights_l1_k={}.png".format(int_k))
+            k,
+            "pruned_weights_l1_k={}.png".format(k))
         weight_loss, weight_acc = weight_pruned_model.evaluate(
             x=x_test,
             y=y_test)
@@ -135,12 +135,13 @@ def prune_experiments(experiment_dir):
         weight_accuracies.append(weight_acc)
 
         # Run unit pruning
-        print("--------------   Unit pruning k={:.2f} -------------".format(k))
+        print("--------------   Unit pruning k={:.3f} -------------".format(k))
         unit_pruned_model = convert_dense_to_unit_pruned(dense_model, k=k)
         graph.plot_units_l2(
             unit_pruned_model,
             experiment_dir,
-            "pruned_units_l2_k={}.png".format(int_k))
+            k,
+            "pruned_units_l2_k={}.png".format(k))
         unit_loss, unit_acc = unit_pruned_model.evaluate(x=x_test, y=y_test)
         unit_losses.append(unit_loss)
         unit_accuracies.append(unit_acc)

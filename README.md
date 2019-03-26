@@ -153,7 +153,7 @@ Each hidden layer used a ReLU activation function while the final output layer u
 
 Snapshots were taken after each epoch if the model improved on the existing snapshot's validation loss.
 
-For each value `k = [0, 25, 50, 60, 70, 80, 90, 95, 97, 99]`, the pre-trained model was cloned twice. Each clone was pruned to k% sparsity using either weight pruning or unit pruning. The pruned model was then assessed using the standard test dataset. The distribution of L1 model weights or L2 unit norms were measured at each sparsity interval.
+For each value `k = [0, 25, 50, 60, 70, 80, 90, 95, 97, 99, 99.5, 99.9]`, the pre-trained model was cloned twice. Each clone was pruned to k% sparsity using either weight pruning or unit pruning. The pruned model was then assessed using the standard test dataset. The distribution of L1 model weights or L2 unit norms were measured at each sparsity interval.
 
 All experiments were run on both the MNIST Digits and MNIST Fashion datasets.
 
@@ -172,62 +172,66 @@ $ python -m network-pruning.train --dataset=fashion --epochs=20 --learning_rate=
 
 The following two figures show the model's loss and accuracy during training.
 
-![MNIST Digit Training Loss/Acc](./references/digits/loss_accuracy.png)
+![MNIST Digit Training Loss/Acc](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/loss_accuracy.png)
 *MNIST Digit training loss and accuracy over 20 epochs*
 
-![MNIST Fashion Training Loss/Acc](./references/fashion/loss_accuracy.png)
+![MNIST Fashion Training Loss/Acc](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/loss_accuracy.png)
 *MNIST Fashion training loss and accuracy over 20 epochs*
 
 ### Pruning
 
 The following four figures depict the model's L1 weight norm distribution and L2 unit norm distribution throughout the sparsification process. As expected, low-valued weights and units are removed from the model as sparsification increases.
 
-![MNIST Digit Weight Pruning](./references/digits/pruned_weights.gif)
+![MNIST Digit Weight Pruning](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/pruned_weights.gif)
 *L1 norm distribution of MNIST Digit model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
 
-![MNIST Fashion Weight Pruning](./references/fashion/pruned_weights.gif)
+![MNIST Fashion Weight Pruning](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/pruned_weights.gif)
 *L1 norm distribution of MNIST Fashion model weights during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99]. Note: 0 weights are not shown because the distribution of 0-weighted elements quickly overshadowed all other values.*
 
-![MNIST Digit Unit Pruning](./references/digits/pruned_units.gif)
+![MNIST Digit Unit Pruning](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/pruned_units.gif)
 *2 norm distribution of MNIST Digit model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
-![MNIST Fashion Unit Pruning](./references/fashion/pruned_units.gif)
+![MNIST Fashion Unit Pruning](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/pruned_units.gif)
 *L2 norm distribution of MNIST Fashion model unit columns during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
 The following two figures compare test loss and test accuracy as sparsity changes. These values are also presented in the two tables below.
 
-![MNIST Digit Test Loss/Acc](./references/digits/pruned_loss_accuracy.png)
+![MNIST Digit Test Loss/Acc](./references/digits-20-lr=0.001-l1=0.0-l2=0.0/pruned_loss_accuracy.png)
 *MNIST Digit test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
-![MNIST Fashion Test Loss/Acc](./references/fashion/pruned_loss_accuracy.png)
+![MNIST Fashion Test Loss/Acc](./references/fashion-20-lr=0.001-l1=0.0-l2=0.0/pruned_loss_accuracy.png)
 *MNIST Fashion test loss and accuracy during sparsification over k%=[0, 25, 50, 60, 70, 80, 90, 95, 97, 99].*
 
 MNIST Digits:
 
 Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: (Weight)  |  Test Loss: (Unit)
 --------------|--------------------------------|----------------------------------|-------------------------------|---------------------------
-0.0000        |  0.9813                        |  0.9813                          |  0.0857                       |  0.0857
-0.2500        |  0.9806                        |  0.9812                          |  0.0851                       |  0.0771
-0.5000        |  0.9813                        |  0.9778                          |  0.0751                       |  0.1213
-0.6000        |  0.9805                        |  0.9719                          |  0.0712                       |  0.4253
-0.7000        |  0.9811                        |  0.9170                          |  0.0777                       |  1.0453
-0.8000        |  0.9777                        |  0.8156                          |  0.1764                       |  1.7635
-0.9000        |  0.9688                        |  0.3849                          |  1.2375                       |  2.2381
-0.9500        |  0.9269                        |  0.1383                          |  2.0858                       |  2.3008
-0.9700        |  0.7721                        |  0.1280                          |  2.2456                       |  2.3023
-0.9900        |  0.3091                        |  0.0980                          |  2.2996           |   2.3026
+0.0000        |  0.9770                        |  0.9770                          |  0.0835                       |  0.0835
+0.2500        |  0.9766                        |  0.9729                          |  0.0831                       |  0.1077
+0.5000        |  0.9761                        |  0.9331                          |  0.0833                       |  0.6293
+0.6000        |  0.9763                        |  0.8959                          |  0.0955                       |  1.1780
+0.7000        |  0.9732                        |  0.7968                          |  0.1683                       |  1.7400
+0.8000        |  0.9722                        |  0.5242                          |  0.4963                       |  2.1341
+0.9000        |  0.9553                        |  0.1733                          |  1.6544                       |  2.2891
+0.9500        |  0.8081                        |  0.1303                          |  2.1806                       |  2.3011
+0.9700        |  0.6536                        |  0.1387                          |  2.2701                       |  2.3023
+0.9900        |  0.2989                        |  0.1128                          |  2.3010                       |  2.3026
+0.9950        |  0.2192                        |  0.1085                          |  2.3024                       |  2.3026
+0.9990        |  0.0564                        |  0.0980                          |  2.3026                       |  2.3026
 
 MNIST Fashion:
 
 Sparsity (%)  |  Test Accuracy (Unit)  |  Test Accuracy (Weight)  |  Test Loss: (Weight)  |  Test Loss: (Unit)
 --------------|--------------------------------|----------------------------------|-------------------------------|---------------------------
-0.0000        |  0.8924                        |  0.8924                          |  0.3234                       |  0.3234
-0.2500        |  0.8912                        |  0.8915                          |  0.3214                       |  0.3158
-0.5000        |  0.8900                        |  0.8869                          |  0.3171                       |  0.3568
-0.6000        |  0.8905                        |  0.8819                          |  0.3128                       |  0.5224
-0.7000        |  0.8866                        |  0.8657                          |  0.3329                       |  0.9656
-0.8000        |  0.8819                        |  0.5516                          |  0.4186                       |  1.7427
-0.9000        |  0.8215                        |  0.3278                          |  0.8818                       |  2.2183
-0.9500        |  0.6263                        |  0.1065                          |  1.6489                       |  2.2940
-0.9700        |  0.3554                        |  0.1634                          |  2.0118                       |  2.3008
-0.9900        |  0.1161                        |  0.0971                          |  2.2380                       |  2.3027
+0.0000        |  0.8851                        |  0.8851                          |  0.3301                       |  0.3301
+0.2500        |  0.8860                        |  0.8851                          |  0.3282                       |  0.3285
+0.5000        |  0.8857                        |  0.8762                          |  0.3288                       |  0.4029
+0.6000        |  0.8815                        |  0.8584                          |  0.3457                       |  0.6464
+0.7000        |  0.8691                        |  0.8142                          |  0.3940                       |  1.1262
+0.8000        |  0.8626                        |  0.5599                          |  0.5275                       |  1.7695
+0.9000        |  0.8045                        |  0.3021                          |  1.1085                       |  2.2208
+0.9500        |  0.5962                        |  0.2072                          |  1.8238                       |  2.2953
+0.9700        |  0.4113                        |  0.1228                          |  2.1279                       |  2.3015
+0.9900        |  0.1609                        |  0.0231                          |  2.2944                       |  2.3027
+0.9950        |  0.0993                        |  0.0635                          |  2.3092                       |  2.3028
+0.9990        |  0.0156                        |  0.1000                          |  2.3042                       |  2.3026

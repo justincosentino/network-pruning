@@ -37,13 +37,14 @@ def plot_history(history, experiment_dir, output_name='loss_accuracy.png'):
     plt.savefig(os.path.join(experiment_dir, output_name))
 
 
-def plot_weights_l1(model, experiment_dir, output_name="weights.png"):
+def plot_weights_l1(model, experiment_dir, k, output_name="weights.png"):
     """
     Plot the distribution of l1 weight norms for the model's current weights.
     Save the plot as a png in the specified directory.
     """
     plt.figure(figsize=(12, 4))
-    plt.subplots_adjust(hspace=0.8, wspace=0.4)
+    plt.suptitle("L1 Weight Norms: {:4.3f}% Sparsity".format(k), y=.99)
+    plt.subplots_adjust(hspace=.8, wspace=0.4)
 
     for i, layer in enumerate(model.layers):
         name = layer.get_config()['name']
@@ -58,13 +59,14 @@ def plot_weights_l1(model, experiment_dir, output_name="weights.png"):
     plt.close('all')
 
 
-def plot_units_l2(model, experiment_dir, output_name="units.png"):
+def plot_units_l2(model, experiment_dir, k, output_name="units.png"):
     """
     Plot the distribution of l2 unit norms for the model's current weights.
     Save the plot as a png in the specified directory.
     """
     plt.figure(figsize=(12, 4))
-    plt.subplots_adjust(hspace=0.8, wspace=0.4)
+    plt.subplots_adjust(hspace=.8, wspace=0.4)
+    plt.suptitle("L2 Unit Norms: {:4.3f}% Sparsity".format(k), y=.99)
 
     for i, layer in enumerate(model.layers):
         name = layer.get_config()['name']
