@@ -105,3 +105,6 @@ venv.bak/
 
 # Serialized modes and figures from experiments
 results/*
+
+# vscode
+.vscode/
