@@ -22,7 +22,8 @@ def load_from_keras(keras_dataset, num_valid=10000):
     # Further break training data into train / validation sets
     if num_valid < 0:
         raise Exception(
-            "invalid num_valid: must be >= 0, specified {}".format(num_valid))
+            "invalid num_valid: must be >= 0, specified {}".format(num_valid)
+        )
     (x_train, x_valid) = x_train[num_valid:], x_train[:num_valid]
     (y_train, y_valid) = y_train[num_valid:], y_train[:num_valid]
 
@@ -36,11 +37,11 @@ def _preprocess_images(images):
     """
     images = images / 255.0
     images = images.reshape(images.shape[0], 784)
-    images = images.astype('float32')
+    images = images.astype("float32")
     assert images.shape[1] == 784
     return images
 
 
 def _preprocess_labels(labels):
     """ Converts labels to float32. """
-    return labels.astype('float32')
+    return labels.astype("float32")

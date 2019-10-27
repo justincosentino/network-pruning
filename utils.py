@@ -10,11 +10,8 @@ def unique_id(flags):
     Currently this is of the form '<dataset_name>-<epochs>-<learning_rate>'.
     """
     return "{}-{}-lr={}-l1={}-l2={}".format(
-        flags.dataset,
-        flags.epochs,
-        flags.learning_rate,
-        flags.l1_reg,
-        flags.l2_reg)
+        flags.dataset, flags.epochs, flags.learning_rate, flags.l1_reg, flags.l2_reg
+    )
 
 
 def get_checkpoint_dir(experiment_dir):

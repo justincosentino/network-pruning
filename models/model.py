@@ -29,43 +29,50 @@ def build_model(name="dense_model"):
     _________________________________________________________________
     """
     with tf.name_scope(name=name):
-        model = tf.keras.Sequential([
-            tf.keras.layers.InputLayer(input_shape=(784,), name="input"),
-            tf.keras.layers.Dense(
-                1000,
-                activation=tf.nn.relu,
-                kernel_regularizer=tf.keras.regularizers.l1_l2(
-                    l1=FLAGS.l1_reg,
-                    l2=FLAGS.l2_reg),
-                use_bias=False,
-                name="hidden_1"),
-            tf.keras.layers.Dense(
-                1000,
-                activation=tf.nn.relu,
-                kernel_regularizer=tf.keras.regularizers.l1_l2(
-                    l1=FLAGS.l1_reg,
-                    l2=FLAGS.l2_reg),
-                use_bias=False,
-                name="hidden_2"),
-            tf.keras.layers.Dense(
-                500,
-                activation=tf.nn.relu,
-                kernel_regularizer=tf.keras.regularizers.l1_l2(
-                    l1=FLAGS.l1_reg,
-                    l2=FLAGS.l2_reg),
-                use_bias=False,
-                name="hidden_3"),
-            tf.keras.layers.Dense(
-                200,
-                activation=tf.nn.relu,
-                kernel_regularizer=tf.keras.regularizers.l1_l2(
-                    l1=FLAGS.l1_reg,
-                    l2=FLAGS.l2_reg),
-                use_bias=False,
-                name="hidden_4"),
-            tf.keras.layers.Dense(
-                10, activation=tf.nn.softmax, use_bias=False, name="output")
-        ])
+        model = tf.keras.Sequential(
+            [
+                tf.keras.layers.InputLayer(input_shape=(784,), name="input"),
+                tf.keras.layers.Dense(
+                    1000,
+                    activation=tf.nn.relu,
+                    kernel_regularizer=tf.keras.regularizers.l1_l2(
+                        l1=FLAGS.l1_reg, l2=FLAGS.l2_reg
+                    ),
+                    use_bias=False,
+                    name="hidden_1",
+                ),
+                tf.keras.layers.Dense(
+                    1000,
+                    activation=tf.nn.relu,
+                    kernel_regularizer=tf.keras.regularizers.l1_l2(
+                        l1=FLAGS.l1_reg, l2=FLAGS.l2_reg
+                    ),
+                    use_bias=False,
+                    name="hidden_2",
+                ),
+                tf.keras.layers.Dense(
+                    500,
+                    activation=tf.nn.relu,
+                    kernel_regularizer=tf.keras.regularizers.l1_l2(
+                        l1=FLAGS.l1_reg, l2=FLAGS.l2_reg
+                    ),
+                    use_bias=False,
+                    name="hidden_3",
+                ),
+                tf.keras.layers.Dense(
+                    200,
+                    activation=tf.nn.relu,
+                    kernel_regularizer=tf.keras.regularizers.l1_l2(
+                        l1=FLAGS.l1_reg, l2=FLAGS.l2_reg
+                    ),
+                    use_bias=False,
+                    name="hidden_4",
+                ),
+                tf.keras.layers.Dense(
+                    10, activation=tf.nn.softmax, use_bias=False, name="output"
+                ),
+            ]
+        )
         model.summary()
         return model
 
@@ -80,8 +87,9 @@ def load_model_weights(experiment_dir):
     checkpoint_dir = get_checkpoint_dir(experiment_dir)
     if not tf.io.gfile.exists(checkpoint_dir):
         raise Exception(
-            "Model checkpoint directory '{}' ".format(checkpoint_dir) +
-            "does not exist. Aborting.")
+            "Model checkpoint directory '{}' ".format(checkpoint_dir)
+            + "does not exist. Aborting."
+        )
 
     # Load the weights and compile the model
     model = build_model()
@@ -91,7 +99,8 @@ def load_model_weights(experiment_dir):
     model.compile(
         optimizer=tf.keras.optimizers.Adam(lr=FLAGS.learning_rate),
         loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"])
+        metrics=["accuracy"],
+    )
     return model
 
 
@@ -122,7 +131,8 @@ def convert_dense_to_weight_pruned(model, k=0):
     new_model.compile(
         optimizer=tf.keras.optimizers.Adam(lr=FLAGS.learning_rate),
         loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"])
+        metrics=["accuracy"],
+    )
     return new_model
 
 
@@ -152,7 +162,8 @@ def convert_dense_to_unit_pruned(model, k=0):
     new_model.compile(
         optimizer=tf.keras.optimizers.Adam(lr=FLAGS.learning_rate),
         loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"])
+        metrics=["accuracy"],
+    )
     return new_model
 
 

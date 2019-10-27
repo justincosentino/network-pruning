@@ -14,7 +14,4 @@ def convert_imgs_to_gif(experiment_dir, prefix):
     filenames = sorted(glob.glob("{}/{}*.png".format(experiment_dir, prefix)))
     for filename in filenames:
         images.append(imageio.imread(filename))
-    imageio.mimsave(
-        "{}/{}.gif".format(experiment_dir, prefix),
-        images,
-        duration=1)
+    imageio.mimsave("{}/{}.gif".format(experiment_dir, prefix), images, duration=1)

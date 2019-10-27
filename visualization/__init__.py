@@ -1,1 +1,1 @@
-__all__ = ['csv', 'gifs', 'graph']
+__all__ = ["csv", "gifs", "graph"]
