@@ -3,4 +3,4 @@ numpy==1.16.2
 imageio==2.5.0
 matplotlib==3.0.3
 seaborn==0.9.0
-tensorflow==1.13.1
+tensorflow==2.5.3
